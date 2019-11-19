@@ -14,3 +14,14 @@ and interact with different NPCs. Player has to go through and complete the stor
 of talking to uncle, buying milk and bread from the store and bringing them back
 to him. This is done by communicating to NPCs with filling missing words in 
 the answer gaps.
+
+# What I learned
+
+* Reading files from folder 'raw'
+* Usage of Android MediaPlayer for sound
+* Usage of different Views from the layout
+* Usage of SpannableString and ClickableSpan to make some text clickable
+* Improved in the OOP in Java
+* Usage of different pre-built fonts
+* Working with the ConstraintLayout
+* Usage of constraint.Guideline in the XML
