@@ -14,23 +14,24 @@ public class MainActivity extends Activity {
     private ImageView worldView;        //Image view to show the map
     private DPad dPad;                      //Controls for walking
 
-    private Character[] characters = new Character[4];
-    private Portal[] portals = new Portal[6];
+    private Character[] characters = new Character[4]; //all 5 characters in the game
+    private Portal[] portals = new Portal[6]; // 7 portals in the map
 
-    private int moveDist;
+    private int moveDist; //the distance the map moves, when dPad button is clicked
 
     //Variables used for tracking story progress
     private boolean talkedToNiels = false;
     private boolean gotBread = false;
     private boolean gotMilk = false;
 
-    Character characterTalkingToYou;        //The charecter that is talking to the player
+    Character characterTalkingToYou; //The character that is talking to the player
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // put the View into a normal fullscreen mode
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -39,41 +40,45 @@ public class MainActivity extends Activity {
     }
 
     public void setupWorld(){
-        worldView = findViewById(R.id.world_view);
-        dPad = new DPad(worldView, this);
+        worldView = findViewById(R.id.world_view); // View for the map
+        dPad = new DPad(worldView, this); // dpad made for the interaction
         createCharacters();
         createPortals();
-        setSizeForAnswerScrollView();
+        setSizeForAnswerScrollView(); // make sure that both ImageView and ScrollView for the answer field are the same height
         applyFonts();
 
         ViewGroup.LayoutParams params = worldView.getLayoutParams();
-        params.width = 64 + moveDist * 38;
-        params.height = 64 + moveDist * 20;
-        // existing height is ok as is, no need to edit it
+        params.width = 64 + moveDist * 38; // set map's width to be according to the movement distance
+        params.height = 64 + moveDist * 20; // set map's height to be according to the movement distance
+        // existing height is ok as it is, so no need to edit it
         worldView.setLayoutParams(params);
 
-        dPad.showDPad();
+        dPad.showDPad(); // make all the dPad Views visible
     }
 
     private void createCharacters()
     {
-        ConversationController[] conversations = new ConversationController[2];         //We set the amount of conversations this character will have
-        int[] exchangeIndexes = {0, 1, 2};                                                    //We give the exhchange indexes for the first conversation
-        conversations[0] = new ConversationController(exchangeIndexes , this, "Niels");       //We create the first convresation
-        exchangeIndexes = new int[] {11, 12, 13, 14};                                                           //we give exhchange indexes for the second conversation
-        conversations[1] = new ConversationController(exchangeIndexes , this, "Niels");       //We create the second convresation
-        characters[0] = new Character("Niels", 30, 16, conversations, this);//We create the character
+        // set the Niels character
+        ConversationController[] conversations = new ConversationController[2];         // set the amount of conversations this character will have
+        int[] exchangeIndexes = {0, 1, 2};                                                    // give the exchange indexes for the first conversation
+        conversations[0] = new ConversationController(exchangeIndexes , this, "Niels");   // create the first conversation
+        exchangeIndexes = new int[] {11, 12, 13, 14};                                                      // give exchange indexes for the second conversation
+        conversations[1] = new ConversationController(exchangeIndexes , this, "Niels");   // create the second conversation
+        characters[0] = new Character("Niels", 30, 16, conversations, this);// create the character
 
+        // set the Old man character
         conversations = new ConversationController[1];
         exchangeIndexes = new int[] {3,4};
         conversations[0] = new ConversationController(exchangeIndexes , this, "Old");
         characters[1] = new Character("Old", 14, 14, conversations, this);
 
+        // set the Clerk character
         conversations = new ConversationController[1];
         exchangeIndexes = new int[] {5, 6, 7};
         conversations[0] = new ConversationController(exchangeIndexes , this, "Clerk");
         characters[2] = new Character("Clerk", 27, 4, conversations, this);
 
+        // set the Baker character
         conversations = new ConversationController[1];
         exchangeIndexes = new int[] {8, 9, 10};
         conversations[0] = new ConversationController(exchangeIndexes , this, "Baker");
@@ -84,19 +89,24 @@ public class MainActivity extends Activity {
     {
         //Find movement distance
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int width = displayMetrics.widthPixels;
-        moveDist = width/4;
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics); //take the metrics of the default screen
+        int width = displayMetrics.widthPixels; // take the width of the screen in pixels
+        moveDist = width/4; // movement distance is 1/4 of the screen width
 
-        //portal outside niels home
+        //portal outside Niels home
+        // location is in grid system
         int portalX = 16;
         int portalY = 6;
+
+        //locations of x and y in the system
         int newGridX = 31;
         int newGridY = 17;
+
+        // calculates an offset for the player's ImageView to stay in the middle
         int offsetX = (newGridX - portalX) * moveDist;
         int offsetY = (newGridY - (portalY + 1)) * moveDist;
-
         portals[0] = new Portal(worldView, portalX, portalY, offsetX, offsetY, newGridX , newGridY);
+
         //portal inside niels home
         portalX = 31;
         portalY = 18;
@@ -115,15 +125,6 @@ public class MainActivity extends Activity {
         offsetY = (newGridY - (portalY + 1)) * moveDist;
         portals[2] = new Portal(worldView, portalX, portalY, offsetX, offsetY, newGridX , newGridY);
 
-        //left door exit from shop
-        portalX = 29;
-        portalY = 9;
-        newGridX = 6;
-        newGridY = 13;
-        offsetX = (newGridX - portalX) * moveDist;
-        offsetY = (newGridY - (portalY - 1)) * moveDist;
-        portals[3] = new Portal(worldView, portalX, portalY, offsetX, offsetY, newGridX , newGridY);
-
         //right door to shop
         portalX = 7;
         portalY = 12;
@@ -132,6 +133,15 @@ public class MainActivity extends Activity {
         offsetX = (newGridX - portalX) * moveDist;
         offsetY = (newGridY - (portalY + 1)) * moveDist;
         portals[4] = new Portal(worldView, portalX, portalY, offsetX, offsetY, newGridX , newGridY);
+
+        //left door exit from shop
+        portalX = 29;
+        portalY = 9;
+        newGridX = 6;
+        newGridY = 13;
+        offsetX = (newGridX - portalX) * moveDist;
+        offsetY = (newGridY - (portalY - 1)) * moveDist;
+        portals[3] = new Portal(worldView, portalX, portalY, offsetX, offsetY, newGridX , newGridY);
 
         //right door exit from shop
         portalX = 30;
@@ -257,14 +267,17 @@ public class MainActivity extends Activity {
     }
 
     private void setSizeForAnswerScrollView(){
+        //make the size of the ImageView equal to the ScrollView of the answer text
         ImageView answer_text_field = findViewById(R.id.answer_text_field);
         ScrollView answer_scrollview = findViewById(R.id.answer_scrollview);
         answer_scrollview.getLayoutParams().height = answer_text_field.getHeight();
     }
 
     private void applyFonts() {
+        // take a downloaded font type
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/MerchantCopyMod.ttf");
 
+        // take all the TextViews in the layout that this font type needs to be put to
         TextView[] toChangeFont = {findViewById(R.id.answer_text),
                 findViewById(R.id.dialogue_text),
                 findViewById(R.id.answer_button_text_0),
@@ -274,6 +287,7 @@ public class MainActivity extends Activity {
                 findViewById(R.id.answer_button_text_4),
                 findViewById(R.id.answer_button_text_5)};
 
+        // apply the font
         for (TextView t : toChangeFont) {
             t.setTypeface(font);
         }

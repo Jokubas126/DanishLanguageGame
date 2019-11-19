@@ -37,14 +37,14 @@ class DPad {
     private AnimationDrawable conversationPressingLeft;
     private AnimationDrawable conversationPressingRight;
 
-    private char[][] mapTiles; //2D array for the map
+    private char[][] mapTiles; //2D array for the map made from map_structure file
 
     private MainActivity mainActivity;
 
 
     DPad (ImageView worldView, MainActivity mainActivity){
         this.mainActivity = mainActivity;
-        player = new PlayerObject(mainActivity);
+        player = new PlayerObject(mainActivity); //creates a player
         loadMapStructure();
         moveX =  worldView.getX();
         moveY =  worldView.getY();
@@ -56,8 +56,8 @@ class DPad {
         int width = displayMetrics.widthPixels;
         moveDist = width/4;
 
-        startX = (int)Math.round(-80 -moveDist * 15.5);         //This value is set manually, to fit the testing device
-        startY = (int)Math.round( -moveDist * 8);               //This value is set manually, to fit the testing device
+        startX = (int)Math.round(-80 -moveDist * 15.5); //This value is set manually, to fit the testing device
+        startY = (int)Math.round( -moveDist * 8);  //This value is set manually, to fit the testing device
 
         //Here we are setting specific coordinates for the world map (So character is located at his starting position)
         ObjectAnimator animation = ObjectAnimator.ofFloat(worldView, "y", worldView.getY(), startY);
@@ -234,15 +234,6 @@ class DPad {
         }
         else if (checkLeft() == '1'){
             dPadImageView.setImageResource(R.drawable.dpad_convo_press_left);
-        }
-    }
-    public void testCheat ()
-    //Hidden cheat to make technical testing faster
-    {
-        if(player.getXGrid() == 32 && player.getYGrid() == 15){
-            mainActivity.setGotBread(true);
-            mainActivity.setGotMilk(true);
-            mainActivity.setTalkedToNiels(true);
         }
     }
     //----------------------------------------------------------------------------------------------

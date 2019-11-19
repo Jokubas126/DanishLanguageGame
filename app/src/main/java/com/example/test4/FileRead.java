@@ -8,9 +8,9 @@ import java.io.InputStreamReader;
 
 public class FileRead {
 
-    private StringBuffer questionText; //normal text of other character
-    private StringBuffer answerText;
-    private StringBuffer[] allAnswers; //array of all possible answers
+    private StringBuffer questionText; //normal text of other characters
+    private StringBuffer answerText; // text, which player says as an answer
+    private StringBuffer[] allAnswers; //array of all possible answer options
 
     private InputStream inputStream; //the text file which is read from
 
@@ -88,8 +88,10 @@ public class FileRead {
         char[][] mapTiles = new char[21][40]; //the 2 dimensional array to be returned to the activity
         int lineIndex = 0; // lines starting from 0 to be read afterwards one by one
         try {
+            // creates a bufferedReader to be able to read a file from given inputStream (text file)
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((newLine = bufferedReader.readLine()) != null) { //while newLine which is new line taken from the txt file is not null
+            //while newLine (line taken from the txt file) is not null
+            while ((newLine = bufferedReader.readLine()) != null) {
 
                 oldLine.replace(0, oldLine.length(), newLine); //replaces previous line with the new line
                 for(int i=0; i<oldLine.length(); i++){ //goes from the first char to the length of the String line

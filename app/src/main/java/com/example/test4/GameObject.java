@@ -1,10 +1,9 @@
 package com.example.test4;
 
 class GameObject  {
+    //locations of x and y in the system, which can be found in map_structure file in raw
     private int xGrid;
     private int yGrid;
-
-    GameObject(){}
 
     //----------------------------------------------------------------------------------------------
     //Setters

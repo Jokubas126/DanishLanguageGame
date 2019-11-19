@@ -17,21 +17,20 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Exchange  {
+class Exchange {
     //Visual elements
     //----------------------------------------------------------------------------------------------------------------
     private TextView answerTextView;            //Text view to hold the text of the user/player
     private TextView dialogueTextView;          //Text view to hold the text of the NPC
     private TextView[] answerButtonsTextView = new TextView[6];     //Text views of the possible answers
     private ImageView answerBackground;     //Background for the answer text
-    private ScrollView answerScrollableView;   //Answer scrollable view
     private AnimationDrawable backgroundIncorrect; //Changes the background to show that the answer is incorrect
 
     //Utility variables
     //----------------------------------------------------------------------------------------------------------------
     private MediaPlayer mediaPlayer;      //Media player object used to play sound
     private MainActivity mainActivity;
-    private ConversationController parentConversationController;        //Conversation controller this exchange belongs to
+    private ConversationController parentConversationController; //Conversation controller this exchange belongs to
     private FileRead fileRead; //Creates the file object for all the Strings to be created there
 
 
@@ -91,7 +90,7 @@ class Exchange  {
 
         //creates exchange object which consists of all the Strings to be put in that one created exchange
         dialogueTextView.setText(addHintsToQuestionText(questionText));
-        dialogueTextView.setMovementMethod(LinkMovementMethod.getInstance());       //Make the hint buttons clickable
+        dialogueTextView.setMovementMethod(LinkMovementMethod.getInstance()); //Make the hint buttons in NPCs' text clickable
         answerTextView.setText(addSlotsToAnswerText(answerText));
         StringBuffer[] answers;
         answers = fileRead.getAllAnswers();
@@ -124,7 +123,7 @@ class Exchange  {
             mediaPlayer.release();
         mediaPlayer = MediaPlayer.create(mainActivity, idOfAudioFile);
         if (mediaPlayer.isPlaying()) {
-            mediaPlayer.seekTo(0); //continues playing the audio from the beginning
+            mediaPlayer.seekTo(0); //puts the audio to the beginning
         } else mediaPlayer.start();
     }
 
@@ -132,14 +131,13 @@ class Exchange  {
     //----------------------------------------------------------------------------------------------
 
     private SpannableString addSlotsToAnswerText(StringBuffer answerText)
-    //Adds slots where they should be and saves the IDs of correct answers
+    //Adds slots where all 6 answers should be and saves the IDs of correct answers
     {
-        StringBuffer stringBuffer = answerText;
         ArrayList<Integer> ansWordIndexList = new ArrayList<>();            //Indexes that show where each answer should go.
-        final Matcher matcher = Pattern.compile("&\\s*(\\w+)").matcher(stringBuffer);
+        final Matcher matcher = Pattern.compile("&\\s*(\\w+)").matcher(answerText);
         while (matcher.find()){
             final String word = matcher.group(1);
-            int wordIndex = stringBuffer.indexOf(word) - 1;
+            int wordIndex = answerText.indexOf(word) - 1;
             ansWordIndexList.add(wordIndex);
         }
         correctAnswers = new int[ansWordIndexList.size()];
@@ -148,14 +146,14 @@ class Exchange  {
         //removing & (button markers) and taking numbers of correct answers
         int index = 0;
         for (int i = 0; i < ansWordIndexList.size(); i++){
-            stringBuffer.deleteCharAt(ansWordIndexList.get(i) - i + (gap.length() - 1) * i);
-            char number = stringBuffer.charAt(ansWordIndexList.get(i) - i + (gap.length() - 1) * i);
+            answerText.deleteCharAt(ansWordIndexList.get(i) - i + (gap.length() - 1) * i);
+            char number = answerText.charAt(ansWordIndexList.get(i) - i + (gap.length() - 1) * i);
             correctAnswers[index] = java.lang.Character.getNumericValue(number);
-            stringBuffer.deleteCharAt(ansWordIndexList.get(i) - i + (gap.length() - 1) * i);
-            stringBuffer.insert(ansWordIndexList.get(i) - i + (gap.length() - 1) * i, gap);
+            answerText.deleteCharAt(ansWordIndexList.get(i) - i + (gap.length() - 1) * i);
+            answerText.insert(ansWordIndexList.get(i) - i + (gap.length() - 1) * i, gap);
             index++;
         }
-        SpannableString spannableString = new SpannableString(stringBuffer);
+        SpannableString spannableString = new SpannableString(answerText);
 
         usersAnswerUnchanged = spannableString.toString();
         return spannableString;
@@ -214,13 +212,13 @@ class Exchange  {
     //Add clicked answers text to the selected answers
     {
         String answerTextToPut = getTextOfClickedAnswerButton(view);
-        answerTextView.setMovementMethod(LinkMovementMethod.getInstance());        //Make the text view clickable. This enables us to add ClickableSpan to this Text View
+        answerTextView.setMovementMethod(LinkMovementMethod.getInstance()); //Make the text view clickable. This enables us to add ClickableSpan to this Text View
         prepareStringForAddingWords();
 
-        if(answerTextView.getText().toString().contains("____"))   //If there is a slot to put the new word in
+        if(answerTextView.getText().toString().contains("____")) //If there is a slot to put the new word in
         {
-            putWordInSlot(answerTextToPut, answerIndex);                     //Put the appropriate answer word in the first available slot
-            SpannableString spanString = buildAnswerTextSpannableString(selectedAnswers, fullAnswer, answerSlotCount);        //Build the string by adding the clickable parts to it
+            putWordInSlot(answerTextToPut, answerIndex);  //Put the appropriate answer word in the first available slot
+            SpannableString spanString = buildAnswerTextSpannableString(selectedAnswers, fullAnswer, answerSlotCount); //Build the string by adding the clickable parts to it
             answerTextView.setText(spanString);
         }
     }
@@ -332,12 +330,12 @@ class Exchange  {
     {
         ImageView answer = (ImageView) view;
         int id = answer.getId();
-        String answerTextName = answer.getResources().getResourceName(id);
-        char takeNum = answerTextName.charAt(answerTextName.length()-1);
-        answerIndex = Integer.parseInt(String.valueOf(takeNum));            //This line lets us know which answer has been selected when checking if the selected answers are correct
-        String textViewName = "answer_button_text_" + takeNum;
+        String answerTextName = answer.getResources().getResourceName(id); // get string of the of what word is in the answer textView
+        char takeNum = answerTextName.charAt(answerTextName.length() - 1); // take the last character of that string
+        answerIndex = Integer.parseInt(String.valueOf(takeNum));   // take integer of an answer has been selected when checking if the selected answers are correct
+        String textViewName = "answer_button_text_" + takeNum; //making the id name of the answer textView
         int idOfTextView = mainActivity.getResources().getIdentifier(textViewName, "id", mainActivity.getPackageName());
-        return mainActivity.findViewById(idOfTextView);
+        return mainActivity.findViewById(idOfTextView); // return the textView needed
     }
 
     //NPC question related methods
@@ -345,45 +343,52 @@ class Exchange  {
 
     private SpannableString addHintsToQuestionText(StringBuffer questionText)
     {
-        StringBuffer stringBuffer = questionText;
-        final Matcher matcher = Pattern.compile("#\\s*(\\w+)").matcher(stringBuffer);
+        //matcher is made to find all the '#', which are at the beginning of hint words in the sentence
+        final Matcher matcher = Pattern.compile("#\\s*(\\w+)").matcher(questionText);
         while (matcher.find()){
-            final String word = matcher.group(1);
-            int wordIndex = stringBuffer.indexOf(word) - 1;
-            hintWordIndexList.add(wordIndex);
-            hintWordList.add(word);
+            final String word = matcher.group(1); // group(1) index means the method of pattern matching
+            int wordIndex = questionText.indexOf(word) - 1; // adjust the index of a hint word to count from 0
+            hintWordIndexList.add(wordIndex); // add index to the list
+            hintWordList.add(word); // add word to another list
         }
-        //removing hashtags(button markers)
+        //removing hash tags(button markers)
         for (int i = 0; i < hintWordIndexList.size(); i++){
-            stringBuffer.deleteCharAt(hintWordIndexList.get(i) - i);
+            questionText.deleteCharAt(hintWordIndexList.get(i) - i);
         }
 
-        SpannableString spannableString = new SpannableString(stringBuffer);    //We turn the stringBuffer in to a spannable string, this enables us to add clickable strings
+        // turn the stringBuffer in to a spannable string, which lets to add clickable strings
+        SpannableString spannableString = new SpannableString(questionText);
 
-        //We go through each hint word an create a clickable span(button) with it
+        // go through each hint word and create a clickable span(button) with it
         for (int i = 0; i < hintWordIndexList.size(); i++){
-            hintWordCount = i;      //amount of hints currently added. We can't use i inside the definition of the onClick method override. Instead, we pass the required variable thorugh a getter.
+            //Amount of hints currently added.
+            //We can't use i inside the definition of the onClick method override
+            //Instead, we pass the required variable through a getter
+            hintWordCount = i;
 
-            //Defiining the behaviour of the newly created clickable span(button); what happens when this span is clicked
+            //Defining the behaviour of the newly created clickable span(button); what happens when this span is clicked
             //-------------------------------------
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    parentConversationController.getHintImage().setVisibility(View.VISIBLE); //make hint view visible
+                    //make hint view visible
+                    parentConversationController.getHintImage().setVisibility(View.VISIBLE);
 
                     //Getting text of clickable span
-                    TextView tv = (TextView) widget;        //we get the textview of the question
-                    Spanned s = (Spanned) tv.getText();     //get the actual text of the text view
+                    TextView tv = (TextView) widget;        // get the textview of the question
+                    Spanned s = (Spanned) tv.getText();     //get the actual text of that text view
                     int start = s.getSpanStart(this);    //find where the clickable part begins
                     int end = s.getSpanEnd(this);        //find where the clickable part ends
-                    String clickableSpanString = s.subSequence(start, end).toString();      //Get the text of the clickable span
+                    String clickableSpanString = s.subSequence(start, end).toString(); //Get the string of the clickable span
 
-                    int currentWord = 0;        //used for finding the right word to show image and play sound
+                    int currentWord = 0; //used for finding the right word to show image and play sound
                     //finding the correct image to show
                     for(int j = 0; j < hintWordCount + 1; j++)
                     {
+                        // if the word in the hint word list is the same as from the clickable string
                         if(hintWordList.get(j).equalsIgnoreCase(clickableSpanString))
                         {
+                            //if true, current word gets an index of j and loop breaks
                             currentWord = j;
                             break;
                         }
@@ -400,8 +405,12 @@ class Exchange  {
             };
             //-------------------------------------
             //We apply the clickable span to the spannable string
-            spannableString.setSpan(clickableSpan, hintWordIndexList.get(i) - i, hintWordIndexList.get(i) - i + hintWordList.get(i).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(clickableSpan,
+                    hintWordIndexList.get(i) - i,
+                    hintWordIndexList.get(i) - i + hintWordList.get(i).length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+        //returning the text together with clickable places (spans) in it
         return spannableString;
     }
 
@@ -414,17 +423,9 @@ class Exchange  {
         return clickedAnswerButtonView.getText().toString();
     }
 
+    // gets string of a file name of needed hint word
     private String getWordFile(int i)
     {
         return englishifize(hintWordList.get(i));
-    }
-
-    //Used for testing purposes
-    //----------------------------------------------------------------------------------------------
-    private boolean checkScrollable(){
-        answerScrollableView = mainActivity.findViewById(R.id.answer_scrollview);
-        if (answerTextView.getMeasuredHeight() >= answerScrollableView.getHeight() + 35) {
-            return true;
-        } else {return false;}
     }
 }

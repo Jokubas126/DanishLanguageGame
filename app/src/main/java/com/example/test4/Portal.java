@@ -8,10 +8,13 @@ class Portal extends GameObject {
     private ImageView map;
     private int offsetWorldX;
     private int offsetWorldY;
+
+    // locations of x and y in the grid system (can be found in the map_structure file in raw)
+    // it defines a place, where the player needs to be sent
     private int destGridX;
     private int destGridY;
 
-    public Portal (ImageView map, int portalGridX, int portalGridY, int offsetWorldX, int offsetWorldY, int gridX, int gridY){
+    Portal (ImageView map, int portalGridX, int portalGridY, int offsetWorldX, int offsetWorldY, int gridX, int gridY){
         this.map = map;
         this.setXGrid(portalGridX);
         this.setYGrid(portalGridY);
